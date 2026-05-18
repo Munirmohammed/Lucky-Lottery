@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth');
 const gameRoutes = require('./routes/game');
 const userRoutes = require('./routes/user');
 const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
 const { initJackpotSocket } = require('./services/jackpot');
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/game', gameRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/shop', shopRoutes);
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
@@ -38,12 +40,12 @@ async function seedPrizes() {
 
   await prisma.prizeConfig.createMany({
     data: [
-      { name: 'try_again',  label: 'Try Again', amount: 0,    currency: 'try_again', weight: 60 },
-      { name: '500_coins',  label: '500',        amount: 500,  currency: 'coins',    weight: 18 },
-      { name: '10_gems',    label: '10',         amount: 10,   currency: 'gems',     weight: 10 },
-      { name: '2000_coins', label: '2,000',      amount: 2000, currency: 'coins',    weight: 7  },
-      { name: '5000_coins', label: '5,000',      amount: 5000, currency: 'coins',    weight: 3  },
-      { name: 'jackpot',    label: 'JACKPOT',    amount: 0,    currency: 'jackpot',  weight: 2  },
+      { name: 'try_again',  label: 'Try Again', amount: 0,    currency: 'try_again', weight: 82 },
+      { name: '500_coins',  label: '500',        amount: 500,  currency: 'coins',    weight: 9  },
+      { name: '10_gems',    label: '10',         amount: 10,   currency: 'gems',     weight: 5  },
+      { name: '2000_coins', label: '2,000',      amount: 2000, currency: 'coins',    weight: 2  },
+      { name: '5000_coins', label: '5,000',      amount: 5000, currency: 'coins',    weight: 1  },
+      { name: 'jackpot',    label: 'JACKPOT',    amount: 0,    currency: 'jackpot',  weight: 1  },
     ]
   });
 
