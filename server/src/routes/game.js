@@ -42,10 +42,17 @@ router.post('/spin', auth, spinLimiter, async (req, res) => {
       currency = 'coins';
     }
 
-    // Only deduct gems — no credit for try_again
-    const updateData = { gems: { decrement: spinCost } };
-    if (currency === 'coins') updateData.coins = { increment: amountWon };
-    if (currency === 'gems') updateData.gems.increment = (updateData.gems.increment || 0) + amountWon;
+    // Build atomic update — can't put both decrement+increment on same field
+    const updateData = {};
+    if (currency === 'gems') {
+      // Net change: prize earned minus spin cost
+      const net = amountWon - spinCost;
+      updateData.gems = net >= 0 ? { increment: net } : { decrement: -net };
+    } else {
+      updateData.gems = { decrement: spinCost };
+      if (currency === 'coins') updateData.coins = { increment: amountWon };
+      // try_again: only the decrement above, no credit
+    }
 
     const [updatedUser] = await prisma.$transaction([
       prisma.user.update({ where: { id: userId }, data: updateData }),
