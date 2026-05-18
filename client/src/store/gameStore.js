@@ -60,6 +60,12 @@ export const useStore = create((set, get) => ({
     set({ spinCost: costData.cost });
   },
 
+  buyGems: async (packageId) => {
+    const { data } = await api.post('/shop/buy', { packageId });
+    set({ user: { ...get().user, ...data.balance } });
+    return data;
+  },
+
   // Returns result data — GamePage controls when to reveal it
   spinAPI: async () => {
     set({ spinning: true });

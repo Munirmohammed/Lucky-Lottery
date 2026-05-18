@@ -4,66 +4,90 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px;
-  background: rgba(10, 0, 25, 0.7);
-  border-bottom: 1px solid rgba(108, 31, 255, 0.3);
-  backdrop-filter: blur(10px);
-  flex-wrap: wrap;
+  padding: 10px 24px;
+  background: rgba(8, 0, 20, 0.8);
+  border-bottom: 1px solid rgba(108, 31, 255, 0.25);
+  backdrop-filter: blur(12px);
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
   gap: 10px;
 }
 
-.logo {
-  font-family: 'Fredoka One', cursive;
-  font-size: 1.3rem;
-  color: var(--gold);
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+.logoIcon { font-size: 1.6rem; }
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
 }
 
+.lucky {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  color: var(--gem);
+}
+
+.lottery {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.25rem;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+}
+
+/* Balances */
 .balances {
   display: flex;
-  gap: 16px;
+  gap: 12px;
 }
 
 .balance {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255,255,255,0.07);
-  padding: 6px 14px;
-  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(255,255,255,0.1);
+  padding: 6px 10px 6px 12px;
+  border-radius: 30px;
 }
 
-.icon { font-size: 1.1rem; }
+.icon { font-size: 1.1rem; line-height: 1; }
 
 .amount {
   font-weight: 800;
   font-size: 1rem;
   color: var(--gold);
+  min-width: 40px;
 }
 
-.gem { color: var(--gem); }
+.gemAmount { color: var(--gem); }
 
-.jackpotBadge {
+.plusBtn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(108, 31, 255, 0.6);
+  border: 1px solid rgba(108, 31, 255, 0.8);
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  background: rgba(255, 215, 0, 0.08);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  padding: 4px 14px;
-  border-radius: 12px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  transition: background 0.15s;
 }
+.plusBtn:hover { background: var(--purple); }
 
-.jackpotLabel {
-  font-size: 0.65rem;
-  font-weight: 900;
-  letter-spacing: 2px;
-  color: var(--gold);
-  opacity: 0.7;
+.plusGem {
+  background: rgba(0, 180, 220, 0.4);
+  border-color: rgba(0, 207, 255, 0.6);
 }
-
-.jackpotAmount {
-  font-weight: 800;
-  font-size: 0.95rem;
-  color: var(--gold);
-}
+.plusGem:hover { background: rgba(0, 207, 255, 0.6); }

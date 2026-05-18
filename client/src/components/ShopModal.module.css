@@ -1,0 +1,199 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.modal {
+  width: 420px;
+  max-width: 95vw;
+  background: linear-gradient(160deg, #1e0835, #0d0020);
+  border: 1px solid rgba(108, 31, 255, 0.5);
+  border-radius: 24px;
+  padding: 28px 24px;
+  box-shadow: 0 0 60px rgba(108, 31, 255, 0.35);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.5rem;
+  color: var(--gem);
+}
+
+.closeBtn {
+  background: rgba(255,255,255,0.08);
+  border: none;
+  color: rgba(255,255,255,0.5);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.closeBtn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+.sub {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 14px;
+}
+.gemBal { color: var(--gem); font-weight: 800; }
+
+.flash {
+  background: rgba(39, 201, 63, 0.15);
+  border: 1px solid rgba(39, 201, 63, 0.4);
+  color: #27c93f;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.errorMsg {
+  background: rgba(255, 71, 87, 0.12);
+  border: 1px solid rgba(255, 71, 87, 0.35);
+  color: var(--red);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.section { margin-bottom: 16px; }
+
+.sectionLabel {
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 12px;
+}
+
+.packages {
+  display: flex;
+  gap: 10px;
+}
+
+.pkgCard {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 16px 8px 12px;
+  transition: border-color 0.2s;
+}
+.pkgCard:hover { border-color: rgba(108, 31, 255, 0.5); }
+
+.pkgTag {
+  position: absolute;
+  top: -10px;
+  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+.pkgGems {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--gem);
+}
+
+.pkgGemLabel {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.4);
+  font-weight: 600;
+}
+
+.pkgPrice {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin: 4px 0;
+}
+
+.buyBtn {
+  width: 100%;
+  padding: 8px 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 900;
+  font-family: inherit;
+  letter-spacing: 1px;
+  margin-top: 6px;
+  transition: opacity 0.2s;
+}
+.buyBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  color: rgba(255,255,255,0.2);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+}
+
+.coinExchange {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.exchangeInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+}
+
+.coinCost { color: var(--gold); font-size: 0.95rem; }
+.arrow { color: rgba(255,255,255,0.3); }
+.gemReward { color: var(--gem); font-size: 0.95rem; }
+
+.coinBal {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+}
+
+.coinBtn {
+  background: linear-gradient(135deg, #c8a600, #8a7000);
+}
