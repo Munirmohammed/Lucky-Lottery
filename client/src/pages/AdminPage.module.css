@@ -1,0 +1,230 @@
+.page {
+  min-height: 100vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.8rem;
+  color: var(--gold);
+  flex: 1;
+}
+
+.saved {
+  color: var(--green);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.back {
+  color: var(--gem);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.statsRow {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.statBox {
+  flex: 1;
+  min-width: 120px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.6);
+}
+
+.statN {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--gold);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  padding: 22px;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.hint {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 14px;
+}
+
+/* Prize row */
+.prizeRow {
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding-bottom: 14px;
+}
+
+.prizeLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.prizeName {
+  font-weight: 700;
+  font-size: 0.92rem;
+  flex: 1;
+}
+
+.prizeChance {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--gem);
+  min-width: 40px;
+  text-align: right;
+}
+
+.prizeRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slider2 {
+  flex: 1;
+  accent-color: var(--purple);
+}
+
+.weightNum {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold);
+  min-width: 24px;
+  text-align: right;
+}
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #444;
+  border-radius: 20px;
+  transition: 0.2s;
+  cursor: pointer;
+}
+.slider::before {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  left: 3px; bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+.toggle input:checked + .slider { background: var(--purple); }
+.toggle input:checked + .slider::before { transform: translateX(16px); }
+
+/* Fields */
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.inputRow { display: flex; gap: 8px; }
+
+.input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  width: 130px;
+}
+.input:focus { border-color: var(--purple); }
+
+.giveForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.giveForm .input { width: 100%; }
+
+.btn {
+  padding: 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+  color: #fff;
+  font-weight: 800;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+/* Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.table th, .table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.table th {
+  color: var(--gold);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+}
+.table td { color: rgba(255,255,255,0.75); }
