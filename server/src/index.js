@@ -38,11 +38,12 @@ async function seedPrizes() {
 
   await prisma.prizeConfig.createMany({
     data: [
-      { name: '500_coins',  label: '500',    amount: 500,   currency: 'coins', weight: 40 },
-      { name: '10_gems',    label: '10',     amount: 10,    currency: 'gems',  weight: 25 },
-      { name: '2000_coins', label: '2,000',  amount: 2000,  currency: 'coins', weight: 20 },
-      { name: '5000_coins', label: '5,000',  amount: 5000,  currency: 'coins', weight: 10 },
-      { name: 'jackpot',    label: 'JACKPOT',amount: 0,     currency: 'jackpot', weight: 5 },
+      { name: 'try_again',  label: 'Try Again', amount: 0,    currency: 'try_again', weight: 60 },
+      { name: '500_coins',  label: '500',        amount: 500,  currency: 'coins',    weight: 18 },
+      { name: '10_gems',    label: '10',         amount: 10,   currency: 'gems',     weight: 10 },
+      { name: '2000_coins', label: '2,000',      amount: 2000, currency: 'coins',    weight: 7  },
+      { name: '5000_coins', label: '5,000',      amount: 5000, currency: 'coins',    weight: 3  },
+      { name: 'jackpot',    label: 'JACKPOT',    amount: 0,    currency: 'jackpot',  weight: 2  },
     ]
   });
 

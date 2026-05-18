@@ -42,7 +42,7 @@ router.post('/spin', auth, spinLimiter, async (req, res) => {
       currency = 'coins';
     }
 
-    // Atomic: deduct gems, credit prize
+    // Only deduct gems — no credit for try_again
     const updateData = { gems: { decrement: spinCost } };
     if (currency === 'coins') updateData.coins = { increment: amountWon };
     if (currency === 'gems') updateData.gems.increment = (updateData.gems.increment || 0) + amountWon;
@@ -56,6 +56,7 @@ router.post('/spin', auth, spinLimiter, async (req, res) => {
 
     res.json({
       prize: { ...prize, amount: amountWon, currency },
+      won: currency !== 'try_again',
       balance: { coins: updatedUser.coins, gems: updatedUser.gems }
     });
   } catch (err) {
@@ -70,9 +71,11 @@ router.get('/spin-cost', auth, async (req, res) => {
   res.json({ cost });
 });
 
-// GET /api/game/prizes — list all enabled prizes for UI
+// GET /api/game/prizes — list all enabled prizes for UI (excludes try_again)
 router.get('/prizes', async (req, res) => {
-  const prizes = await prisma.prizeConfig.findMany({ where: { enabled: true } });
+  const prizes = await prisma.prizeConfig.findMany({
+    where: { enabled: true, NOT: { currency: 'try_again' } }
+  });
   res.json(prizes);
 });
 
