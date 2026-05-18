@@ -10,9 +10,10 @@ import styles from './GamePage.module.css';
 const SPIN_DURATION = 3500;
 
 export default function GamePage() {
-  const { user, prizes, spinCost, spinning, loadPrizes, spinAPI, logout } = useStore();
+  const { user, prizes, spinCost, spinning, loadPrizes, spinAPI, claimBalance, logout } = useStore();
   const [phase, setPhase] = useState('idle');   // idle | animating | reveal
   const [result, setResult] = useState(null);
+  const [selectedBall, setSelectedBall] = useState(null);
   const [error, setError] = useState('');
   const globeRef = useRef(null);
 
@@ -21,12 +22,16 @@ export default function GamePage() {
   async function handleSpin() {
     if (phase !== 'idle') return;
     setError('');
+    setSelectedBall(null);
     setPhase('animating');
     try {
       const [spinData] = await Promise.all([
         spinAPI(),
         new Promise(r => setTimeout(r, SPIN_DURATION))
       ]);
+      // Pick a random ball number (1-9) as the visual "chosen" ball
+      const chosenBall = Math.floor(Math.random() * 9) + 1;
+      setSelectedBall(chosenBall);
       setResult(spinData);
       setPhase('reveal');
       if (spinData.won) {
@@ -47,7 +52,10 @@ export default function GamePage() {
   }
 
   function handleClose() {
+    // Apply balance update NOW — when user acknowledges the result
+    if (result?.balance) claimBalance(result.balance);
     setResult(null);
+    setSelectedBall(null);
     setPhase('idle');
   }
 
@@ -60,13 +68,12 @@ export default function GamePage() {
       <HUD />
 
       <div className={styles.body}>
-        {/* ── Left column ── */}
+        {/* LEFT column */}
         <div className={styles.leftCol}>
           <div className={styles.jackpotBox}>
             <p className={styles.jackpotLabel}>JACKPOT</p>
             <JackpotAmount />
           </div>
-
           <div className={styles.howBox}>
             <p className={styles.howTitle}>HOW TO PLAY</p>
             <Step icon="🎱" text="Click SPIN button" />
@@ -76,9 +83,9 @@ export default function GamePage() {
           </div>
         </div>
 
-        {/* ── Center column ── */}
+        {/* CENTER column */}
         <div className={styles.centerCol}>
-          <GlobeCanvas ref={globeRef} animating={isAnimating} />
+          <GlobeCanvas ref={globeRef} animating={isAnimating} selectedBallNum={selectedBall} />
 
           <AnimatePresence>
             {error && (
@@ -109,7 +116,7 @@ export default function GamePage() {
           <p className={styles.spinCost}>1 SPIN = 💎 {spinCost}</p>
         </div>
 
-        {/* ── Right column ── */}
+        {/* RIGHT column */}
         <div className={styles.rightCol}>
           <AnimatePresence mode="wait">
             {phase === 'idle' && (
@@ -142,6 +149,12 @@ export default function GamePage() {
                 <div className={styles.congratsBanner}>CONGRATULATIONS!</div>
                 <p className={styles.wonLabel}>★ YOU WON ★</p>
 
+                {selectedBall && (
+                  <div className={styles.selectedBallTag}>
+                    🎱 Ball #{selectedBall}
+                  </div>
+                )}
+
                 <motion.div className={styles.giftIcon}
                   animate={{ y: [0, -8, 0] }}
                   transition={{ repeat: Infinity, duration: 1.8 }}>
@@ -150,9 +163,7 @@ export default function GamePage() {
 
                 <div className={styles.prizeAmount}>
                   <span>{result.prize.currency === 'gems' ? '💎' : '🪙'}</span>
-                  <span className={styles.prizeNum}>
-                    {result.prize.amount.toLocaleString()}
-                  </span>
+                  <span className={styles.prizeNum}>{result.prize.amount.toLocaleString()}</span>
                 </div>
 
                 {result.prize.name === 'jackpot' && (
@@ -175,6 +186,12 @@ export default function GamePage() {
                 exit={{ opacity: 0 }}
                 transition={{ type: 'spring', damping: 14, stiffness: 180 }}>
 
+                {selectedBall && (
+                  <div className={styles.selectedBallTagDim}>
+                    🎱 Ball #{selectedBall}
+                  </div>
+                )}
+
                 <motion.span className={styles.sadEmoji}
                   animate={{ rotate: [0, -12, 12, -8, 8, 0] }}
                   transition={{ duration: 0.5, delay: 0.15 }}>
@@ -193,7 +210,6 @@ export default function GamePage() {
             )}
           </AnimatePresence>
 
-          {/* Always-visible possible rewards strip */}
           <div className={styles.rewardStrip}>
             <RewardPanel prizes={prizes} />
           </div>

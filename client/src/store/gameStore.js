@@ -66,16 +66,25 @@ export const useStore = create((set, get) => ({
     return data;
   },
 
-  // Returns result data — GamePage controls when to reveal it
+  // Returns result — does NOT update balance (claimBalance does that on claim click)
   spinAPI: async () => {
     set({ spinning: true });
     try {
       const { data } = await api.post('/game/spin');
-      set({ user: { ...get().user, ...data.balance }, spinning: false });
+      // Only deduct the gem cost immediately so UI shows correct gem count
+      set({
+        spinning: false,
+        user: { ...get().user, gems: data.balance.gems }
+      });
       return data;
     } catch (err) {
       set({ spinning: false });
       throw err;
     }
+  },
+
+  // Called when user clicks GET PRIZE or TRY AGAIN — applies full balance
+  claimBalance: (balance) => {
+    set({ user: { ...get().user, ...balance } });
   },
 }));

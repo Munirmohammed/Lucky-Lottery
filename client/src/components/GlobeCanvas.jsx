@@ -6,12 +6,13 @@ const BALL_COLORS = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6'
 const BALL_COUNT = 9;
 const GLOBE_RADIUS = 155;
 
-const GlobeCanvas = forwardRef(function GlobeCanvas({ animating }, ref) {
+const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum }, ref) {
   const canvasRef = useRef(null);
   const engineRef = useRef(null);
   const renderRef = useRef(null);
   const ballsRef = useRef([]);
   const animFrameRef = useRef(null);
+  const selectedBallNumRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     highlightBall: (index) => {
@@ -98,24 +99,48 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ animating }, ref) {
     Runner.run(runner, engine);
     Render.run(render);
 
-    // Custom draw: numbers + glow on highlighted ball
+    // Custom draw: numbers on each ball, glow on selected
     Events.on(render, 'afterRender', () => {
       const ctx = render.context;
+      // selectedBallNum is read live from the ref so it stays current
+      const selected = selectedBallNumRef.current;
+      const hasSelection = selected !== null && selected !== undefined;
+
       ballsRef.current.forEach((ball) => {
         const { x, y } = ball.position;
+        const isSelected = ball._number === selected;
         ctx.save();
-        if (ball._highlight) {
-          ctx.shadowBlur = 30;
-          ctx.shadowColor = '#fff';
+
+        // Fade non-selected balls when a selection is active
+        if (hasSelection && !isSelected) {
+          ctx.globalAlpha = 0.3;
+        }
+
+        if (isSelected) {
+          // Outer glow pulse ring
+          ctx.shadowBlur = 40;
+          ctx.shadowColor = '#ffd700';
+          ctx.beginPath();
+          ctx.arc(x, y, 30, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          // White ring border
           ctx.beginPath();
           ctx.arc(x, y, 26, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(255,255,255,0.25)';
-          ctx.fill();
+          ctx.strokeStyle = '#ffd700';
+          ctx.lineWidth = 3;
+          ctx.stroke();
         }
-        ctx.font = 'bold 14px Nunito, sans-serif';
-        ctx.fillStyle = '#fff';
+
+        // Ball number
+        ctx.font = `bold ${isSelected ? 16 : 14}px Nunito, sans-serif`;
+        ctx.fillStyle = isSelected ? '#ffd700' : '#fff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
+        ctx.shadowBlur = isSelected ? 10 : 0;
+        ctx.shadowColor = '#ffd700';
         ctx.fillText(ball._number, x, y);
         ctx.restore();
       });
@@ -128,6 +153,11 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ animating }, ref) {
       World.clear(engine.world);
     };
   }, []);
+
+  // Keep ref in sync so the afterRender callback always reads the latest value
+  useEffect(() => {
+    selectedBallNumRef.current = selectedBallNum;
+  }, [selectedBallNum]);
 
   // Kick balls when animating starts so they bounce chaotically
   useEffect(() => {
