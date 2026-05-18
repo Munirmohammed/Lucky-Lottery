@@ -2,134 +2,357 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  position: relative;
   overflow: hidden;
+  position: relative;
 }
 
-.main {
+/* ── 3-column body ── */
+.body {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
-  padding: 20px;
+  min-height: 0;
   position: relative;
   z-index: 1;
-  overflow: hidden;
+  display: grid;
+  grid-template-columns: 200px 1fr 300px;
+  gap: 0;
+  padding: 18px 20px;
 }
 
-/* ── Left panel ── */
-.leftPanel {
-  width: 200px;
-  flex-shrink: 0;
+/* ════════════════════
+   LEFT COLUMN
+═══════════════════ */
+.leftCol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-right: 16px;
 }
 
-.howToPlay {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 18px 16px;
+/* Jackpot box */
+.jackpotBox {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.jackpotLabel {
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--gold);
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+.jackpotAmount {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.3rem;
+  color: var(--gold);
+  text-shadow: 0 0 14px rgba(255, 215, 0, 0.45);
+}
+
+/* How to play */
+.howBox {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 14px;
 }
 
 .howTitle {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 900;
-  letter-spacing: 2px;
+  letter-spacing: 2.5px;
   color: var(--gold);
-  margin-bottom: 14px;
-  opacity: 0.8;
+  opacity: 0.7;
+  margin-bottom: 12px;
 }
 
 .step {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.88rem;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.84rem;
   font-weight: 600;
-  color: rgba(255,255,255,0.75);
-  margin-bottom: 12px;
-  line-height: 1.3;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 10px;
+  line-height: 1.35;
 }
 
-/* ── Center ── */
-.center {
+.stepIcon { font-size: 1rem; flex-shrink: 0; }
+
+/* ════════════════════
+   CENTER COLUMN
+═══════════════════ */
+.centerCol {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  justify-content: center;
+  gap: 16px;
 }
 
 .spinBtn {
-  width: 260px;
-  padding: 18px 0;
+  width: 240px;
+  padding: 17px 0;
   border-radius: 50px;
-  background: linear-gradient(135deg, #27c93f, #1aab31);
+  background: linear-gradient(135deg, #27c93f, #17941d);
   color: #fff;
   font-family: 'Fredoka One', cursive;
-  font-size: 1.7rem;
-  letter-spacing: 2px;
+  font-size: 1.65rem;
+  letter-spacing: 3px;
   box-shadow: 0 6px 30px rgba(39, 201, 63, 0.5);
-  transition: box-shadow 0.2s, transform 0.1s;
+  transition: transform 0.1s, box-shadow 0.2s;
 }
-
 .spinBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
   box-shadow: 0 8px 40px rgba(39, 201, 63, 0.7);
-  transform: translateY(-1px);
 }
 
 .spinDisabled {
-  background: linear-gradient(135deg, #555, #333);
+  background: linear-gradient(135deg, #3a3a3a, #222);
   box-shadow: none;
+  opacity: 0.55;
   cursor: not-allowed;
-  opacity: 0.6;
 }
 
 .spinCost {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
+  letter-spacing: 1.5px;
   color: var(--gem);
-  opacity: 0.8;
-  letter-spacing: 1px;
+  opacity: 0.75;
 }
 
 .error {
   color: var(--red);
-  font-size: 0.88rem;
+  font-size: 0.87rem;
   font-weight: 700;
 }
 
-/* ── Right panel ── */
-.rightPanel {
-  width: 220px;
-  flex-shrink: 0;
+/* ════════════════════
+   RIGHT COLUMN
+═══════════════════ */
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 16px;
+  overflow: hidden;
+}
+
+/* ── Idle panel ── */
+.idlePanel {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 20px;
+}
+
+.idleTitle {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.4rem;
+  color: rgba(255,255,255,0.6);
+}
+
+.idleSub {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.3);
+  line-height: 1.5;
+}
+
+/* ── Spinning panel ── */
+.spinningPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.spinDots {
+  font-size: 2rem;
+  letter-spacing: 6px;
+}
+
+.spinningText {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 1px;
+}
+
+/* ── Win panel ── */
+.winPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(160deg, rgba(108,31,255,0.15), rgba(30,5,60,0.4));
+  border: 2px solid rgba(108, 31, 255, 0.5);
+  border-radius: 20px;
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(108, 31, 255, 0.2), inset 0 0 30px rgba(108,31,255,0.05);
+}
+
+.congratsBanner {
+  background: linear-gradient(135deg, var(--purple), #9333ea);
+  color: #fff;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1rem;
+  letter-spacing: 1.5px;
+  padding: 7px 18px;
+  border-radius: 30px;
+  box-shadow: 0 4px 16px rgba(108,31,255,0.5);
+}
+
+.wonLabel {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.65);
+}
+
+.giftIcon {
+  font-size: 3.5rem;
+  filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.55));
+}
+
+.prizeAmount {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.8rem;
+}
+
+.prizeAmount span:first-child { font-size: 1.5rem; }
+
+.prizeNum {
+  font-family: 'Fredoka One', cursive;
+  color: var(--gold);
+  text-shadow: 0 0 16px rgba(255,215,0,0.5);
+}
+
+.jackpotTag {
+  background: var(--gold);
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 1.5px;
+}
+
+.getPrizeBtn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f9a825, #e65100);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 900;
+  font-family: inherit;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 18px rgba(249, 168, 37, 0.5);
+  transition: box-shadow 0.2s;
+  margin-top: 4px;
+}
+.getPrizeBtn:hover { box-shadow: 0 6px 28px rgba(249, 168, 37, 0.75); }
+
+/* ── Try Again panel ── */
+.tryAgainPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.sadEmoji { font-size: 3rem; display: block; }
+
+.tryTitle {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.4rem;
+  color: rgba(255,255,255,0.8);
+}
+
+.trySub {
+  font-size: 0.84rem;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.5;
+}
+
+.tryBtn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 900;
+  font-family: inherit;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 16px rgba(108,31,255,0.4);
+  margin-top: 4px;
+}
+
+/* ── Rewards strip ── */
+.rewardStrip {
+  flex-shrink: 0;
 }
 
 .adminLink {
   color: var(--gold);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   text-decoration: none;
-  opacity: 0.7;
+  opacity: 0.6;
+  text-align: center;
   transition: opacity 0.2s;
 }
 .adminLink:hover { opacity: 1; }
 
 .logoutBtn {
   background: transparent;
-  color: rgba(255,255,255,0.4);
-  font-size: 0.8rem;
+  color: rgba(255,255,255,0.3);
+  font-size: 0.78rem;
   font-family: inherit;
   font-weight: 600;
+  text-align: center;
   transition: color 0.2s;
 }
 .logoutBtn:hover { color: var(--red); }
 
 /* ── Responsive ── */
-@media (max-width: 700px) {
-  .leftPanel, .rightPanel { display: none; }
-  .main { padding: 12px; }
+@media (max-width: 760px) {
+  .body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    padding: 10px 12px;
+    gap: 12px;
+    overflow-y: auto;
+  }
+
+  .leftCol { flex-direction: row; padding-right: 0; }
+  .jackpotBox, .howBox { flex: 1; }
+
+  .rightCol { padding-left: 0; }
+
+  .idlePanel { flex: unset; padding: 12px; }
+  .winPanel, .tryAgainPanel { flex: unset; }
 }
