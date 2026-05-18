@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  coins     Int      @default(500)
+  gems      Int      @default(100)
+  isAdmin   Boolean  @default(false)
+  spins     Spin[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Spin {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  prizeId   String
+  prize     PrizeConfig @relation(fields: [prizeId], references: [id])
+  amountWon Int
+  currency  String
+  gemsCost  Int
+  createdAt DateTime @default(now())
+}
+
+model PrizeConfig {
+  id       String  @id @default(uuid())
+  name     String  @unique
+  label    String
+  amount   Int
+  currency String
+  weight   Int
+  enabled  Boolean @default(true)
+  spins    Spin[]
+  updatedAt DateTime @updatedAt
+}
+
+model Jackpot {
+  id         String    @id @default(uuid())
+  amount     Int       @default(25000)
+  seed       Int       @default(25000)
+  contribution Int     @default(2)
+  lastWonAt  DateTime?
+  updatedAt  DateTime  @updatedAt
+}
+
+model Settings {
+  id       String @id @default(uuid())
+  key      String @unique
+  value    String
+  updatedAt DateTime @updatedAt
+}
