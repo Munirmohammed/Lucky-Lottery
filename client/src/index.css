@@ -1,0 +1,67 @@
+:root {
+  --gold: #ffd700;
+  --gold-dark: #c8a600;
+  --purple: #6c1fff;
+  --purple-dark: #4a00c8;
+  --purple-bg: #1a0533;
+  --purple-mid: #2d0a50;
+  --gem: #00cfff;
+  --green: #27c93f;
+  --red: #ff4757;
+  --text: #fff;
+  --text-muted: rgba(255,255,255,0.6);
+  --radius: 16px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  height: 100%;
+  background: var(--purple-bg);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  user-select: none;
+  overflow: hidden;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+
+/* Gold glow text */
+.gold-text {
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+}
+
+/* Gem/diamond text */
+.gem-text {
+  color: var(--gem);
+  text-shadow: 0 0 10px rgba(0, 207, 255, 0.5);
+}
+
+/* Animated gradient bg */
+.bg-stars {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(108, 31, 255, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(0, 207, 255, 0.15) 0%, transparent 50%),
+    #0d0020;
+  z-index: 0;
+}
+
+/* Glass card */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
