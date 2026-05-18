@@ -34,23 +34,30 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 initJackpotSocket(io);
 
+const DEFAULT_PRIZES = [
+  { name: 'try_again',  label: 'Try Again', amount: 0,    currency: 'try_again', weight: 62 },
+  { name: '500_coins',  label: '500',        amount: 500,  currency: 'coins',    weight: 19  },
+  { name: '10_gems',    label: '10',         amount: 10,   currency: 'gems',     weight: 10  },
+  { name: '2000_coins', label: '2,000',      amount: 2000, currency: 'coins',    weight: 7  },
+  { name: '5000_coins', label: '5,000',      amount: 5000, currency: 'coins',    weight: 1  },
+  { name: 'jackpot',    label: 'JACKPOT',    amount: 0,    currency: 'jackpot',  weight: 1  },
+];
+
 async function seedPrizes() {
-  const count = await prisma.prizeConfig.count();
-  if (count > 0) return;
+  // Upsert on every start so weights always match defaults
+  // (admin can still override via the panel — changes persist until next restart)
+  for (const prize of DEFAULT_PRIZES) {
+    await prisma.prizeConfig.upsert({
+      where: { name: prize.name },
+      update: { weight: prize.weight, amount: prize.amount, enabled: true },
+      create: prize,
+    });
+  }
 
-  await prisma.prizeConfig.createMany({
-    data: [
-      { name: 'try_again',  label: 'Try Again', amount: 0,    currency: 'try_again', weight: 82 },
-      { name: '500_coins',  label: '500',        amount: 500,  currency: 'coins',    weight: 9  },
-      { name: '10_gems',    label: '10',         amount: 10,   currency: 'gems',     weight: 5  },
-      { name: '2000_coins', label: '2,000',      amount: 2000, currency: 'coins',    weight: 2  },
-      { name: '5000_coins', label: '5,000',      amount: 5000, currency: 'coins',    weight: 1  },
-      { name: 'jackpot',    label: 'JACKPOT',    amount: 0,    currency: 'jackpot',  weight: 1  },
-    ]
-  });
+  const jackpotCount = await prisma.jackpot.count();
+  if (jackpotCount === 0) await prisma.jackpot.create({ data: {} });
 
-  await prisma.jackpot.create({ data: {} });
-  console.log('Default prizes seeded');
+  console.log('Prizes synced');
 }
 
 server.listen(PORT, async () => {
