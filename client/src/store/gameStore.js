@@ -8,7 +8,6 @@ export const useStore = create((set, get) => ({
   user: null,
   jackpot: 25000,
   prizes: [],
-  spinResult: null,
   spinning: false,
   spinCost: 10,
 
@@ -45,7 +44,7 @@ export const useStore = create((set, get) => ({
     localStorage.clear();
     if (socket) socket.disconnect();
     socket = null;
-    set({ user: null, spinResult: null });
+    set({ user: null });
   },
 
   connectSocket: () => {
@@ -61,18 +60,16 @@ export const useStore = create((set, get) => ({
     set({ spinCost: costData.cost });
   },
 
-  spin: async () => {
-    if (get().spinning) return;
-    set({ spinning: true, spinResult: null });
+  // Returns result data — GamePage controls when to reveal it
+  spinAPI: async () => {
+    set({ spinning: true });
     try {
       const { data } = await api.post('/game/spin');
-      set({ spinResult: data, user: { ...get().user, ...data.balance } });
+      set({ user: { ...get().user, ...data.balance }, spinning: false });
+      return data;
     } catch (err) {
-      throw err;
-    } finally {
       set({ spinning: false });
+      throw err;
     }
   },
-
-  clearResult: () => set({ spinResult: null }),
 }));

@@ -6,7 +6,7 @@ const BALL_COLORS = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6'
 const BALL_COUNT = 9;
 const GLOBE_RADIUS = 155;
 
-const GlobeCanvas = forwardRef(function GlobeCanvas({ spinning }, ref) {
+const GlobeCanvas = forwardRef(function GlobeCanvas({ animating }, ref) {
   const canvasRef = useRef(null);
   const engineRef = useRef(null);
   const renderRef = useRef(null);
@@ -129,19 +129,30 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ spinning }, ref) {
     };
   }, []);
 
-  // Apply spin impulses when spinning
+  // Kick balls when animating starts so they bounce chaotically
   useEffect(() => {
-    if (!spinning) return;
+    if (!animating) return;
+
+    // Initial strong burst
+    ballsRef.current.forEach(ball => {
+      Matter.Body.setVelocity(ball, {
+        x: (Math.random() - 0.5) * 18,
+        y: (Math.random() - 0.5) * 18
+      });
+    });
+
+    // Keep applying random impulses throughout the animation
     const interval = setInterval(() => {
       ballsRef.current.forEach(ball => {
         Matter.Body.applyForce(ball, ball.position, {
-          x: (Math.random() - 0.5) * 0.025,
-          y: (Math.random() - 0.5) * 0.025
+          x: (Math.random() - 0.5) * 0.06,
+          y: (Math.random() - 0.5) * 0.06
         });
       });
-    }, 120);
+    }, 100);
+
     return () => clearInterval(interval);
-  }, [spinning]);
+  }, [animating]);
 
   return (
     <div className={styles.wrapper}>

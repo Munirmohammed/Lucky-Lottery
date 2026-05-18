@@ -1,34 +1,52 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store/gameStore';
 import HUD from '../components/HUD';
 import GlobeCanvas from '../components/GlobeCanvas';
 import PrizeReveal from '../components/PrizeReveal';
+import TryAgainScreen from '../components/TryAgainScreen';
 import RewardPanel from '../components/RewardPanel';
 import styles from './GamePage.module.css';
 
+const SPIN_DURATION = 3500; // ms balls bounce before result is shown
+
 export default function GamePage() {
-  const { user, prizes, spinCost, spinning, spinResult, loadPrizes, spin, clearResult, logout } = useStore();
+  const { user, prizes, spinCost, spinning, loadPrizes, spinAPI, logout } = useStore();
+
+  // 'idle' → 'animating' → 'reveal'
+  const [phase, setPhase] = useState('idle');
+  const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const globeRef = useRef(null);
 
   useEffect(() => { loadPrizes(); }, []);
 
   async function handleSpin() {
-    if (spinning || spinResult) return;
+    if (phase !== 'idle') return;
     setError('');
+    setPhase('animating');
+
     try {
-      await spin();
+      // Run API call and minimum animation timer in parallel
+      const [spinData] = await Promise.all([
+        spinAPI(),
+        new Promise(res => setTimeout(res, SPIN_DURATION))
+      ]);
+      setResult(spinData);
+      setPhase('reveal');
     } catch (err) {
-      setError(err.response?.data?.error || 'Spin failed');
+      setPhase('idle');
+      setError(err.response?.data?.error || 'Spin failed, try again');
     }
   }
 
-  function handleClaim() {
-    clearResult();
+  function handleClose() {
+    setResult(null);
+    setPhase('idle');
   }
 
-  const canSpin = !spinning && !spinResult && (user?.gems || 0) >= spinCost;
+  const isAnimating = phase === 'animating';
+  const canSpin = phase === 'idle' && !spinning && (user?.gems || 0) >= spinCost;
 
   return (
     <div className={styles.page}>
@@ -49,27 +67,32 @@ export default function GamePage() {
 
         {/* Center — globe */}
         <div className={styles.center}>
-          <GlobeCanvas ref={globeRef} spinning={spinning} />
+          <GlobeCanvas ref={globeRef} animating={isAnimating} />
 
-          {error && (
-            <motion.p
-              className={styles.error}
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              {error}
-            </motion.p>
-          )}
+          <AnimatePresence>
+            {error && (
+              <motion.p
+                className={styles.error}
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                {error}
+              </motion.p>
+            )}
+          </AnimatePresence>
 
           <motion.button
             className={`${styles.spinBtn} ${!canSpin ? styles.spinDisabled : ''}`}
             onClick={handleSpin}
             disabled={!canSpin}
             whileTap={canSpin ? { scale: 0.95 } : {}}
-            animate={spinning ? { boxShadow: ['0 0 20px #27c93f', '0 0 50px #27c93f', '0 0 20px #27c93f'] } : {}}
-            transition={spinning ? { repeat: Infinity, duration: 0.8 } : {}}
+            animate={isAnimating ? {
+              boxShadow: ['0 6px 30px rgba(39,201,63,0.5)', '0 6px 50px rgba(39,201,63,0.9)', '0 6px 30px rgba(39,201,63,0.5)']
+            } : {}}
+            transition={isAnimating ? { repeat: Infinity, duration: 0.7 } : {}}
           >
-            {spinning ? 'SPINNING...' : 'SPIN'}
+            {isAnimating ? 'SPINNING...' : 'SPIN'}
           </motion.button>
 
           <p className={styles.spinCost}>1 SPIN = 💎 {spinCost}</p>
@@ -85,9 +108,15 @@ export default function GamePage() {
         </div>
       </main>
 
-      {spinResult && (
-        <PrizeReveal result={spinResult} onClaim={handleClaim} />
-      )}
+      {/* Overlays */}
+      <AnimatePresence>
+        {phase === 'reveal' && result?.won && (
+          <PrizeReveal result={result} onClaim={handleClose} />
+        )}
+        {phase === 'reveal' && !result?.won && (
+          <TryAgainScreen onClose={handleClose} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
