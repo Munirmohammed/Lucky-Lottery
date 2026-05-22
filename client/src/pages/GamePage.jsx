@@ -129,10 +129,8 @@ export default function GamePage() {
                     '0 6px 55px rgba(39,201,63,0.95)',
                     '0 6px 30px rgba(39,201,63,0.5)'
                   ]
-                } : {}}
+                } : { boxShadow: '0 6px 30px rgba(39,201,63,0.5)' }}
                 transition={isAnimating ? { repeat: Infinity, duration: 0.65 } : {}}
-                initial={{ opacity: 0 }}
-                exit={{ opacity: 0 }}
               >
                 {isAnimating ? 'SPINNING...' : 'SPIN'}
               </motion.button>
