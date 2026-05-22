@@ -28,9 +28,8 @@
 /* ── Ball ── */
 .ballWrapper {
   position: relative;
-  width: 180px;
-  height: 180px;
   flex-shrink: 0;
+  /* width/height set inline (dynamic by screen size) */
 }
 
 .glowRing {
@@ -39,28 +38,22 @@
   border-radius: 50%;
 }
 
-/* Each half-wrapper clips to top or bottom 50% */
+/* Half-wrappers: size + borderRadius set inline */
 .halfWrap {
   position: absolute;
   left: 0;
-  width: 180px;
-  height: 90px;
 }
 
-/* The actual circle inside each half (full 180x180, just cropped by wrapper) */
+/* Top half ball circle */
 .halfBall {
-  width: 180px;
-  height: 180px;
   border-radius: 50%;
   position: absolute;
   top: 0;
   left: 0;
 }
 
-/* Bottom half: the circle must start 90px above the wrapper so the bottom half shows */
+/* Bottom half ball circle */
 .halfBallBottom {
-  width: 180px;
-  height: 180px;
   border-radius: 50%;
   position: absolute;
   bottom: 0;
@@ -184,11 +177,22 @@
 .tryBtn:hover { box-shadow: 0 8px 36px rgba(108, 31, 255, 0.8); }
 
 /* ── Responsive ── */
-@media (max-width: 480px) {
-  .ballWrapper { width: 140px; height: 140px; }
-  .halfWrap { width: 140px; height: 70px; }
-  .halfBall, .halfBallBottom { width: 140px; height: 140px; }
-  .ballNumber { font-size: 2.8rem; }
-  .prizeNum { font-size: 2.8rem; }
-  .wonBanner { font-size: 1.6rem; }
+@media (max-width: 600px) {
+  .scene { gap: 20px; }
+  .ballNumber { font-size: 3rem; }
+  .prizeNum { font-size: 3rem; }
+  .wonBanner { font-size: 1.7rem; }
+  .claimBtn, .tryBtn { padding: 14px 36px; font-size: 1.1rem; }
+}
+
+@media (max-width: 400px) {
+  .scene { gap: 14px; }
+  .ballNumber { font-size: 2.4rem; }
+  .prizeNum { font-size: 2.5rem; }
+  .wonBanner { font-size: 1.4rem; }
+  .claimBtn, .tryBtn { padding: 12px 28px; font-size: 1rem; }
+  .sadEmoji { font-size: 3rem; }
+  .loseTitle { font-size: 1.5rem; }
+  .currencyIcon { font-size: 2.2rem; }
+  .prizeContent { min-width: 240px; }
 }

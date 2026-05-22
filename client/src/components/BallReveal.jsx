@@ -5,11 +5,21 @@ import styles from './BallReveal.module.css';
 
 const BALL_COLORS = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6','#1abc9c','#e91e63','#ff5722'];
 
+function getBallSize() {
+  const w = window.innerWidth;
+  if (w <= 400) return 120;
+  if (w <= 600) return 150;
+  return 180;
+}
+
 // stage: 'entering' → 'splitting' → 'revealed'
 export default function BallReveal({ ballNum, result, onClaim }) {
   const [stage, setStage] = useState('entering');
   const color = BALL_COLORS[(ballNum - 1) % BALL_COLORS.length];
   const won = result?.won;
+  const ballSize = getBallSize();
+  const halfSize = ballSize / 2;
+  const splitOffset = halfSize + 25; // halves fly past center by 25px
 
   useEffect(() => {
     const t1 = setTimeout(() => setStage('splitting'), 900);
@@ -52,6 +62,7 @@ export default function BallReveal({ ballNum, result, onClaim }) {
         {/* ── Ball halves ── */}
         <motion.div
           className={styles.ballWrapper}
+          style={{ width: ballSize, height: ballSize }}
           initial={{ scale: 0.05, opacity: 0, y: 60 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           transition={{ duration: 0.7, type: 'spring', damping: 13, stiffness: 140 }}
@@ -67,26 +78,26 @@ export default function BallReveal({ ballNum, result, onClaim }) {
           {/* Top half wrapper */}
           <motion.div
             className={styles.halfWrap}
-            style={{ top: 0, borderRadius: '90px 90px 0 0', overflow: 'hidden' }}
-            animate={isOpen ? { y: -115 } : { y: 0 }}
+            style={{ top: 0, width: ballSize, height: halfSize, borderRadius: `${halfSize}px ${halfSize}px 0 0`, overflow: 'hidden' }}
+            animate={isOpen ? { y: -splitOffset } : { y: 0 }}
             transition={{ duration: 0.55, type: 'spring', damping: 14, stiffness: 160 }}
           >
             <div
               className={styles.halfBall}
-              style={{ background: `radial-gradient(circle at 38% 32%, ${lighten(color)}, ${color})` }}
+              style={{ width: ballSize, height: ballSize, background: `radial-gradient(circle at 38% 32%, ${lighten(color)}, ${color})` }}
             />
           </motion.div>
 
           {/* Bottom half wrapper */}
           <motion.div
             className={styles.halfWrap}
-            style={{ bottom: 0, borderRadius: '0 0 90px 90px', overflow: 'hidden' }}
-            animate={isOpen ? { y: 115 } : { y: 0 }}
+            style={{ bottom: 0, width: ballSize, height: halfSize, borderRadius: `0 0 ${halfSize}px ${halfSize}px`, overflow: 'hidden' }}
+            animate={isOpen ? { y: splitOffset } : { y: 0 }}
             transition={{ duration: 0.55, type: 'spring', damping: 14, stiffness: 160 }}
           >
             <div
               className={styles.halfBallBottom}
-              style={{ background: `radial-gradient(circle at 38% 68%, ${color}, ${darken(color)})` }}
+              style={{ width: ballSize, height: ballSize, background: `radial-gradient(circle at 38% 68%, ${color}, ${darken(color)})` }}
             />
           </motion.div>
 

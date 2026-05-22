@@ -404,19 +404,39 @@
 
 /* ── Responsive ── */
 @media (max-width: 760px) {
+  .page { overflow-y: auto; overflow-x: hidden; }
+
   .body {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto auto auto;
     padding: 10px 12px;
-    gap: 12px;
-    overflow-y: auto;
+    gap: 8px;
+    overflow: visible;
+    height: auto;
   }
 
-  .leftCol { flex-direction: row; padding-right: 0; }
-  .jackpotBox, .howBox { flex: 1; }
+  /* Left col: jackpot + how-to side by side */
+  .leftCol { flex-direction: row; padding-right: 0; gap: 8px; }
+  .jackpotBox { flex: 0 0 auto; padding: 8px 12px; }
+  .jackpotAmount { font-size: 1.1rem; }
+  .jackpotLabel { font-size: 0.6rem; margin-bottom: 3px; }
+  .howBox { flex: 1; padding: 10px; }
+  .howTitle { font-size: 0.6rem; margin-bottom: 8px; }
+  .step { font-size: 0.75rem; margin-bottom: 6px; }
 
+  /* Center: globe + button fit on one screen */
+  .centerCol { gap: 10px; }
+
+  /* Right col */
   .rightCol { padding-left: 0; }
-
-  .idlePanel { flex: unset; padding: 12px; }
+  /* Hide text panels on mobile — center col already shows "PICK A BALL" / "SPINNING..." */
+  .idlePanel, .spinningPanel, .selectingPanel { display: none; }
   .winPanel, .tryAgainPanel { flex: unset; }
+}
+
+/* Very small phones */
+@media (max-width: 400px) {
+  .howBox { display: none; }
+  .spinBtn { width: 200px; font-size: 1.4rem; padding: 14px 0; }
+  .pickInstruction { font-size: 1.3rem; }
 }
