@@ -3,7 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const rateLimit = require('express-rate-limit');
 const auth = require('../middleware/auth');
 const { selectPrize } = require('../services/prizeEngine');
-const { contributeToJackpot, claimJackpot } = require('../services/jackpot');
+const { contributeToJackpot, claimJackpot, isJackpotAvailable } = require('../services/jackpot');
 
 const prisma = new PrismaClient();
 
@@ -31,8 +31,13 @@ router.post('/spin', auth, spinLimiter, async (req, res) => {
     if (!user) return res.status(404).json({ error: 'User not found' });
     if (user.gems < spinCost) return res.status(400).json({ error: 'Not enough gems' });
 
-    const prize = await selectPrize();
+    let prize = await selectPrize();
     await contributeToJackpot(spinCost);
+
+    // Jackpot on 7-day cooldown → downgrade to try_again
+    if (prize.currency === 'jackpot' && !(await isJackpotAvailable())) {
+      prize = { ...prize, currency: 'try_again', amount: 0 };
+    }
 
     let amountWon = prize.amount;
     let currency = prize.currency;

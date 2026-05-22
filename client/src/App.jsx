@@ -6,9 +6,11 @@ import AdminPage from './pages/AdminPage';
 import { useStore } from './store/gameStore';
 
 export default function App() {
-  const { user, loadUser } = useStore();
+  const { user, authLoading, loadUser } = useStore();
 
   useEffect(() => { loadUser(); }, []);
+
+  if (authLoading) return null;
 
   return (
     <Routes>

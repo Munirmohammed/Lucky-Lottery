@@ -1,18 +1,19 @@
-import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import { useEffect, useRef, forwardRef, useImperativeHandle, useCallback } from 'react';
 import Matter from 'matter-js';
 import styles from './GlobeCanvas.module.css';
 
 const BALL_COLORS = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6','#1abc9c','#e91e63','#ff5722'];
 const BALL_COUNT = 9;
 const GLOBE_RADIUS = 155;
+const BALL_RADIUS = 22;
 
-const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum }, ref) {
+const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum, canSelect, onBallClick }, ref) {
   const canvasRef = useRef(null);
   const engineRef = useRef(null);
-  const renderRef = useRef(null);
   const ballsRef = useRef([]);
-  const animFrameRef = useRef(null);
   const selectedBallNumRef = useRef(null);
+  const canSelectRef = useRef(false);
+  const hoveredBallRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     highlightBall: (index) => {
@@ -36,14 +37,8 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum
     const render = Render.create({
       canvas,
       engine,
-      options: {
-        width: W,
-        height: H,
-        wireframes: false,
-        background: 'transparent'
-      }
+      options: { width: W, height: H, wireframes: false, background: 'transparent' }
     });
-    renderRef.current = render;
 
     // Globe boundary — ring of static segments
     const segments = 48;
@@ -58,7 +53,7 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum
       const mx = (x1 + x2) / 2;
       const my = (y1 + y2) / 2;
       const angle = Math.atan2(y2 - y1, x2 - x1);
-      const len = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+      const len = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
       walls.push(Bodies.rectangle(mx, my, len + 2, 8, {
         isStatic: true, angle,
         render: { fillStyle: 'transparent', strokeStyle: 'transparent', lineWidth: 0 },
@@ -68,14 +63,13 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum
     World.add(engine.world, walls);
 
     // Balls
-    const ballRadius = 22;
     ballsRef.current = Array.from({ length: BALL_COUNT }, (_, i) => {
       const angle = (i / BALL_COUNT) * Math.PI * 2;
       const r = GLOBE_RADIUS * 0.45;
       const ball = Bodies.circle(
         cx + r * Math.cos(angle),
         cy + r * Math.sin(angle),
-        ballRadius,
+        BALL_RADIUS,
         {
           restitution: 0.75,
           friction: 0.02,
@@ -86,11 +80,7 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum
       );
       ball._number = i + 1;
       ball._color = BALL_COLORS[i];
-      ball._highlight = false;
-      Body.setVelocity(ball, {
-        x: (Math.random() - 0.5) * 6,
-        y: (Math.random() - 0.5) * 6
-      });
+      Body.setVelocity(ball, { x: (Math.random() - 0.5) * 6, y: (Math.random() - 0.5) * 6 });
       return ball;
     });
     World.add(engine.world, ballsRef.current);
@@ -99,25 +89,37 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum
     Runner.run(runner, engine);
     Render.run(render);
 
-    // Custom draw: numbers on each ball, glow on selected
+    // Custom draw: numbers, glow on selected, hover ring during selection
     Events.on(render, 'afterRender', () => {
       const ctx = render.context;
-      // selectedBallNum is read live from the ref so it stays current
       const selected = selectedBallNumRef.current;
+      const hovered = hoveredBallRef.current;
+      const inSelectMode = canSelectRef.current;
       const hasSelection = selected !== null && selected !== undefined;
 
       ballsRef.current.forEach((ball) => {
         const { x, y } = ball.position;
         const isSelected = ball._number === selected;
+        const isHovered = inSelectMode && ball._number === hovered && !hasSelection;
         ctx.save();
 
-        // Fade non-selected balls when a selection is active
         if (hasSelection && !isSelected) {
           ctx.globalAlpha = 0.3;
         }
 
+        // Hover ring (during selecting phase, before ball is chosen)
+        if (isHovered) {
+          ctx.shadowBlur = 25;
+          ctx.shadowColor = '#fff';
+          ctx.beginPath();
+          ctx.arc(x, y, BALL_RADIUS + 8, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+        }
+
         if (isSelected) {
-          // Outer glow pulse ring
           ctx.shadowBlur = 40;
           ctx.shadowColor = '#ffd700';
           ctx.beginPath();
@@ -125,8 +127,6 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum
           ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
           ctx.fill();
           ctx.shadowBlur = 0;
-
-          // White ring border
           ctx.beginPath();
           ctx.arc(x, y, 26, 0, Math.PI * 2);
           ctx.strokeStyle = '#ffd700';
@@ -134,7 +134,6 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum
           ctx.stroke();
         }
 
-        // Ball number
         ctx.font = `bold ${isSelected ? 16 : 14}px Nunito, sans-serif`;
         ctx.fillStyle = isSelected ? '#ffd700' : '#fff';
         ctx.textAlign = 'center';
@@ -154,24 +153,15 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum
     };
   }, []);
 
-  // Keep ref in sync so the afterRender callback always reads the latest value
-  useEffect(() => {
-    selectedBallNumRef.current = selectedBallNum;
-  }, [selectedBallNum]);
+  useEffect(() => { selectedBallNumRef.current = selectedBallNum; }, [selectedBallNum]);
+  useEffect(() => { canSelectRef.current = canSelect; }, [canSelect]);
 
-  // Kick balls when animating starts so they bounce chaotically
+  // Strong burst when spin starts
   useEffect(() => {
     if (!animating) return;
-
-    // Initial strong burst
     ballsRef.current.forEach(ball => {
-      Matter.Body.setVelocity(ball, {
-        x: (Math.random() - 0.5) * 18,
-        y: (Math.random() - 0.5) * 18
-      });
+      Matter.Body.setVelocity(ball, { x: (Math.random() - 0.5) * 18, y: (Math.random() - 0.5) * 18 });
     });
-
-    // Keep applying random impulses throughout the animation
     const interval = setInterval(() => {
       ballsRef.current.forEach(ball => {
         Matter.Body.applyForce(ball, ball.position, {
@@ -180,14 +170,52 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum
         });
       });
     }, 100);
-
     return () => clearInterval(interval);
   }, [animating]);
+
+  const getBallAtPoint = useCallback((clientX, clientY) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const px = (clientX - rect.left) * scaleX;
+    const py = (clientY - rect.top) * scaleY;
+    return ballsRef.current.find(b => {
+      const dx = b.position.x - px;
+      const dy = b.position.y - py;
+      return Math.sqrt(dx * dx + dy * dy) <= BALL_RADIUS + 8;
+    }) || null;
+  }, []);
+
+  function handleCanvasClick(e) {
+    if (!canSelectRef.current) return;
+    const ball = getBallAtPoint(e.clientX, e.clientY);
+    if (ball && onBallClick) onBallClick(ball._number);
+  }
+
+  function handleMouseMove(e) {
+    if (!canSelectRef.current) return;
+    const ball = getBallAtPoint(e.clientX, e.clientY);
+    hoveredBallRef.current = ball ? ball._number : null;
+  }
+
+  function handleMouseLeave() {
+    hoveredBallRef.current = null;
+  }
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.globeRing} />
-      <canvas ref={canvasRef} className={styles.canvas} width={340} height={340} />
+      <canvas
+        ref={canvasRef}
+        className={`${styles.canvas} ${canSelect ? styles.canSelect : ''}`}
+        width={340}
+        height={340}
+        onClick={handleCanvasClick}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      />
     </div>
   );
 });

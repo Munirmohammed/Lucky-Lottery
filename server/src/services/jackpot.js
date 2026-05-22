@@ -20,12 +20,12 @@ async function getJackpot() {
 async function contributeToJackpot(spinCostGems) {
   const jackpot = await getJackpot();
   const contribution = Math.ceil((spinCostGems * jackpot.contribution) / 100);
-  const updated = await prisma.jackpot.update({
-    where: { id: jackpot.id },
-    data: { amount: { increment: contribution } }
-  });
-  if (io) io.emit('jackpot_update', updated.amount);
-  return updated;
+  // const updated = await prisma.jackpot.update({
+  //   where: { id: jackpot.id },
+  //   data: { amount: { increment: contribution } }
+  // });
+  // if (io) io.emit('jackpot_update', updated.amount);
+  return jackpot;
 }
 
 async function claimJackpot() {
@@ -39,4 +39,11 @@ async function claimJackpot() {
   return wonAmount;
 }
 
-module.exports = { initJackpotSocket, getJackpot, contributeToJackpot, claimJackpot };
+async function isJackpotAvailable() {
+  const jackpot = await getJackpot();
+  if (!jackpot.lastWonAt) return true;
+  const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+  return Date.now() - new Date(jackpot.lastWonAt).getTime() > SEVEN_DAYS_MS;
+}
+
+module.exports = { initJackpotSocket, getJackpot, contributeToJackpot, claimJackpot, isJackpotAvailable };

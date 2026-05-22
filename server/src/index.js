@@ -34,13 +34,14 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 initJackpotSocket(io);
 
+// Total weight 1000 → jackpot = 0.2% (1 in 500), enforced by 7-day cooldown on top
 const DEFAULT_PRIZES = [
-  { name: 'try_again',  label: 'Try Again', amount: 0,    currency: 'try_again', weight: 62 },
-  { name: '500_coins',  label: '500',        amount: 500,  currency: 'coins',    weight: 19  },
-  { name: '10_gems',    label: '10',         amount: 10,   currency: 'gems',     weight: 10  },
-  { name: '2000_coins', label: '2,000',      amount: 2000, currency: 'coins',    weight: 7  },
-  { name: '5000_coins', label: '5,000',      amount: 5000, currency: 'coins',    weight: 1  },
-  { name: 'jackpot',    label: 'JACKPOT',    amount: 0,    currency: 'jackpot',  weight: 1  },
+  { name: 'try_again',  label: 'Try Again', amount: 0,    currency: 'try_again', weight: 820 },
+  { name: '500_coins',  label: '500',        amount: 500,  currency: 'coins',    weight: 100 },
+  { name: '10_gems',    label: '10',         amount: 10,   currency: 'gems',     weight: 40  },
+  { name: '2000_coins', label: '2,000',      amount: 2000, currency: 'coins',    weight: 30  },
+  { name: '5000_coins', label: '5,000',      amount: 5000, currency: 'coins',    weight: 8   },
+  { name: 'jackpot',    label: 'JACKPOT',    amount: 0,    currency: 'jackpot',  weight: 2   },
 ];
 
 async function seedPrizes() {

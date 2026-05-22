@@ -1,0 +1,194 @@
+/* Full-screen overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 0, 20, 0.88);
+  backdrop-filter: blur(6px);
+}
+
+.colorBg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Scene — stacks ball + prize vertically */
+.scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  position: relative;
+}
+
+/* ── Ball ── */
+.ballWrapper {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  flex-shrink: 0;
+}
+
+.glowRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+/* Each half-wrapper clips to top or bottom 50% */
+.halfWrap {
+  position: absolute;
+  left: 0;
+  width: 180px;
+  height: 90px;
+}
+
+/* The actual circle inside each half (full 180x180, just cropped by wrapper) */
+.halfBall {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Bottom half: the circle must start 90px above the wrapper so the bottom half shows */
+.halfBallBottom {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+/* Ball number in center */
+.ballNumber {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka One', cursive;
+  font-size: 3.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* White burst from center when splitting */
+.innerBurst {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 70%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ── Prize content ── */
+.prizeContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  min-width: 280px;
+}
+
+.wonBanner {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2rem;
+  color: var(--gold, #ffd700);
+  text-shadow: 0 0 24px rgba(255, 215, 0, 0.7), 0 0 48px rgba(255, 215, 0, 0.3);
+  letter-spacing: 2px;
+}
+
+.prizeRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.currencyIcon {
+  font-size: 2.8rem;
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6));
+}
+
+.prizeNum {
+  font-family: 'Fredoka One', cursive;
+  font-size: 3.6rem;
+  color: var(--gold, #ffd700);
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  line-height: 1;
+}
+
+.jackpotLabel {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: var(--gold, #ffd700);
+  opacity: 0.8;
+}
+
+.claimBtn {
+  margin-top: 4px;
+  padding: 16px 48px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #f9a825, #e65100);
+  color: #fff;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.3rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 6px 30px rgba(249, 168, 37, 0.6), 0 0 60px rgba(249, 168, 37, 0.2);
+  transition: box-shadow 0.2s;
+}
+.claimBtn:hover { box-shadow: 0 8px 40px rgba(249, 168, 37, 0.85); }
+
+/* ── Lose ── */
+.sadEmoji {
+  font-size: 4rem;
+  display: block;
+}
+
+.loseTitle {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.8rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.loseSub {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1.5;
+}
+
+.tryBtn {
+  margin-top: 4px;
+  padding: 15px 48px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, var(--purple, #6c1fff), #9333ea);
+  color: #fff;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 28px rgba(108, 31, 255, 0.55);
+  transition: box-shadow 0.2s;
+}
+.tryBtn:hover { box-shadow: 0 8px 36px rgba(108, 31, 255, 0.8); }
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .ballWrapper { width: 140px; height: 140px; }
+  .halfWrap { width: 140px; height: 70px; }
+  .halfBall, .halfBallBottom { width: 140px; height: 140px; }
+  .ballNumber { font-size: 2.8rem; }
+  .prizeNum { font-size: 2.8rem; }
+  .wonBanner { font-size: 1.6rem; }
+}

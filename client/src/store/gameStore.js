@@ -6,6 +6,7 @@ let socket = null;
 
 export const useStore = create((set, get) => ({
   user: null,
+  authLoading: true,
   jackpot: 25000,
   prizes: [],
   spinning: false,
@@ -13,14 +14,15 @@ export const useStore = create((set, get) => ({
 
   loadUser: async () => {
     const token = localStorage.getItem('access_token');
-    if (!token) return;
+    if (!token) { set({ authLoading: false }); return; }
     try {
       const { data } = await api.get('/user/me');
-      set({ user: data });
+      set({ user: data, authLoading: false });
       get().connectSocket();
     } catch {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
+      set({ authLoading: false });
     }
   },
 
