@@ -24,8 +24,10 @@ const GlobeCanvas = forwardRef(function GlobeCanvas({ animating, selectedBallNum
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const W = canvas.offsetWidth;
-    const H = canvas.offsetHeight;
+    // Always use the canvas buffer dimensions (340×340), not the CSS display size.
+    // CSS scales the display; physics must stay in the same coordinate space.
+    const W = canvas.width;
+    const H = canvas.height;
     const cx = W / 2;
     const cy = H / 2;
 
